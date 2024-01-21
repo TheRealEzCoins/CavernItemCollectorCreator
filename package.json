@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "minecraft-data": "^3.59.3",
     "vue": "^3.3.11"
   },
   "devDependencies": {

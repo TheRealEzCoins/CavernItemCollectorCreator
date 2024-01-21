@@ -2,11 +2,14 @@
 import { ref } from 'vue';
 import Items from './assets/items.json';
 
+
 export default {
   data() {
     return {
       Items,
       selected_option: null,
+      name: "",
+      lore: "",
     };
   },
   computed: {
@@ -21,18 +24,33 @@ export default {
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
     },
+    getIcon(name){
+      console.log(name)
+      return `./src/assets/items/${name}.png`; //you may need change this according to your image path in the project
+    },
   },
 };
 </script>
+
 <template>
   <div>
-    <select v-model="selected_option">
-      <option v-for="name in itemIDs" :key="name" :value="name">
-        {{ formatItemName(name) }}
-      </option>
-    </select>
+    <div style="display: flex; align-items: center;">
+      <img v-if="selected_option" :src="getIcon(selected_option)" alt="?" style="height:30px; margin-right: 10px;">
+      <select v-model="selected_option">
+        <option v-for="name in itemIDs" :key="name" :value="name">
+          {{ formatItemName(name) }}
+        </option>
+      </select>
+    </div>
+    <div style="align-items: center;">
+      <input v-model="name" placeholder="Name">
+    </div>
+    <div>
+      <textarea v-model="lore" placeholder="Lore"></textarea>
+    </div>
   </div>
 </template>
+
 <style scoped>
 header {
   line-height: 1.5;
