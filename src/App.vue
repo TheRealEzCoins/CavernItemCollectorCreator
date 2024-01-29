@@ -62,12 +62,12 @@ export default {
   },
   computed: {
     previewData() {
-      return`${this.tagName}:\n
-             name: '${this.tagName}'
-             material: ${this.getMaterial(this.selectedRadio)}
-             slot: ${this.inventorySlot}
-             ${this.getType(this.selectedRadio)}
-             ${this.allItems.map(item => this.returnAsText(item))}
+      return`${this.tagName}:
+  name: '${this.tagName}'
+  material: ${this.getMaterial(this.selectedRadio)}
+  slot: ${this.inventorySlot}
+  ${this.getType(this.selectedRadio)}
+  ${this.allItems.map(item => this.returnAsText(item))}
           `; // Modifed here
     }
   },
