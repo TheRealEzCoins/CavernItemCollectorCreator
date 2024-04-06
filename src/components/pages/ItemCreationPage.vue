@@ -18,13 +18,6 @@
             </select>
           </div>
           <div class="input-field">
-            <select v-model="item.selected_month" class="item-select">
-              <option v-for="month in monthOptions" :key="month" :value="month">
-                {{ month }}
-              </option>
-            </select>
-          </div>
-          <div class="input-field">
             <input type="number" v-model="item.selected_large_number" placeholder="Crate Number" class="item-input-number">
           </div>
           <div class="input-field">
@@ -52,12 +45,17 @@
 </template>
 <script>
 import { ref } from 'vue';
-import Items from '../../assets/items.json';
+import Items from '../../../public/items.json';
+import app from "@/App.vue";
 
 export default {
   props: {
     selected_small_number: {
       type: Number,
+      required: true
+    },
+    passed_month: {
+      type: String,
       required: true
     }
   },
@@ -67,21 +65,28 @@ export default {
         material: null,
         name: "",
         lore: [""],
-        selected_month: null,
-        item_number: this.selected_small_number
+        selected_month: this.passed_month,
+        item_number: this.selected_small_number,
+        selected_large_number: null
       },
       Items,
-      selected_large_number: null,
       textBox1: "",
       textBox2: "",
       current_year: new Date().getFullYear(),
-      monthOptions: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
       open: false
     };
   },
   computed: {
     itemIDs() {
       return this.Items.map(item => item.name).sort();
+    },
+  },
+
+  watch: {
+    selected_month: {
+      handler(newMonth) {
+        this.item.selected_month = newMonth;
+      },
     },
   },
 
@@ -92,27 +97,42 @@ export default {
           .join(' ');
     },
     getIcon(name) {
-      return `./src/assets/items/${name}.png`;
+      return `./items/${name}.png`;
     },
     addLoreField() {
       this.item.lore.push("");
     },
     fillTextBoxes(){
       const lore = this.item.lore.join('. ');
-
       this.textBox1 = `
   '${this.selected_small_number}'\n\
     material: ${this.item.material.toUpperCase()}\n\
-    name: '${this.name}'\n\
+    name: '${this.item.name}'\n\
     lore:\n\
-    - '&8${lore.split('. ').join("\n    - '&8")}'\n\
+    - '&8${lore.split('. ').join("'\n    - '&8")}'\n\
     - '&8      '\n\
-    - '&e${this.item.selected_month} ${this.current_year} Collectors Item'`;
+    - '&e${this.passed_month} ${this.current_year} Collectors Item'`;
 
-      this.textBox2 = JSON.stringify({
-        name: this.name,
-        lore: lore
-      }, null, 2);
+      this.textBox2 = `
+'${this.item.selected_large_number}':
+    DisplayName: '&8${this.item.name}'
+    DisplayItem: ${this.item.material.toUpperCase()}
+    DisplayAmount: 1
+    Lore:
+    - '&8${lore.split('. ').join("\n    - '&8")}'
+    - '&8      '
+    - '&e${this.passed_month} ${this.current_year} Collectors Item'
+    - '&f3%'
+    MaxRange: 100
+    Chance: 3
+    Firework: false
+    Glowing: true
+    Player: ''
+    unbreakable: true
+    HideItemFlags: true
+    Items:
+    - Item:${this.item.material.toUpperCase()}, Amount:1, Name:&8${this.item.name}, UNBREAKING:1, HIDE_ENCHANTS, Lore:&8${lore.split('. ').join(",&8      ")},&8      ,&e${this.passed_month} ${this.current_year} Collectors Item
+    `;
     },
     toggleOpen() {
       this.open = !this.open;

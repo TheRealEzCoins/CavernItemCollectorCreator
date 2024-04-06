@@ -14,6 +14,13 @@
               <label for="radio2">Tag</label>
               <input type="text" placeholder="Inventory Slot" v-model="inventorySlot">
               <input type="text" v-if="selectedRadio === '3DItem'" placeholder="Custom Model Data" id="custom-model-data">
+              <div class="input-field">
+                <select v-model="selected_month" class="item-select">
+                  <option v-for="month in monthOptions" :key="month" :value="month">
+                    {{ month }}
+                  </option>
+                </select>
+              </div>
             </div>
             <input type="text" placeholder="Emoji" maxLength="2" id="tag-emoji">
           </div>
@@ -24,6 +31,7 @@
         <div class="item-creation-pages">
           <ItemCreationPage v-for="n in 9" :key="n" :collapsed="true"
                             :selected_small_number="n"
+                            :passed_month="selected_month"
                             @click="toggleCollapse(n)"
                             ref="itemRefs" /> <!-- Add ref here -->
         </div>
@@ -33,7 +41,7 @@
       <div v-if="showPopup" class="popup">
         <h3>Preview</h3>
         <pre style="overflow-y:auto; height:100px;">{{ previewData }}</pre>
-        <a :href="downloadUrl" download="data.txt">Download</a>
+        <a :href="downloadUrl" :download=getFileName>Download</a>
         <button @click="closePopup">Close</button>
       </div>
     </div>
@@ -50,6 +58,7 @@ export default {
   data() {
     return {
       items: Array.from({length: 9}, () => true),
+      selected_month: null,
       selectedRadio : null,
       tagName: '',
       inventorySlot: '',
@@ -58,6 +67,8 @@ export default {
       showPopup: false,
       downloadUrl: null,
       allItems: [],
+      monthOptions: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+
     }
   },
   computed: {
@@ -91,6 +102,9 @@ export default {
     toggleCollapse(index) {
       this.items[index - 1] = !this.items[index - 1];
     },
+    getFileName() {
+      return `ItemCollector_${this.selected_month}_${new Date().getFullYear()}`
+    },
     returnAsText(item) {
       const lore = item.lore.join('. ');
       return `
@@ -114,6 +128,8 @@ export default {
     },
   }
 };
+
+var selected_monthFUCKYOU
 </script>
 
 <style scoped>
